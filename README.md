@@ -16,7 +16,7 @@ In addition to above, bookstore talks to an external service to fetch the book p
 The principle behind test automation is to get **_fast and accurate_** feedback for any product changes. One way to do that is **_write lots of small and fast unit tests_**. 
 Write some more coarse-grained tests and **_very few high-level_** tests that test your application from end to end.
 
-![Test Pyramid](docs/images/test-pyramid.png?raw=true "Test Pyramid")
+![Test Pyramid](docs/images/test-pyramid.png)
 
 Some useful resources on test pyramid:
 - https://martinfowler.com/bliki/TestPyramid.html
