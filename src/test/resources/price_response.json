@@ -1,0 +1,7 @@
+{
+  "type": "type",
+  "id": "id",
+  "title": "book title",
+  "price": 10.00,
+  "isbn": "someisbn"
+}
