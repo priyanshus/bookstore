@@ -11,6 +11,9 @@ The bookstore also listens on a Kafka topic (books) and stores the consumed even
 
 In addition to above, bookstore talks to an external service to fetch the book price. The fetched price for an isbn used to form `book/price/{isbn}` response. In case of price service failures, the book stores returns failure messages.
 
+### How to run tests
+`gradle test` runs all the tests. Make sure the host system is having docker installed to run the component tests.
+
 # Test Pyramid
 
 The principle behind test automation is to get **_fast and accurate_** feedback for any product changes. One way to do that is **_write lots of small and fast unit tests_**. 
@@ -111,7 +114,7 @@ in production, we can have contract tests._
 Testing the whole component without other third-party code and services.
 
 Goal of component testing is to test that different parts of the microservice work together as expected at the same time isolating third-party code and services. 
-The isolation of dependencies can be achieved by test beds (Example mocks, in-memory databased).
+The isolation of dependencies can be achieved by test beds (mocks, in-memory database etc).
 
 ### What to Test:
 - end to end journey of micro-service
@@ -170,6 +173,6 @@ Test with Kafka Integration
     }
 ```
 
-### Useful Resources Microservice testing strategy
-- https://martinfowler.com/articles/microservice-testing/#testing-integration-introduction
-- https://martinfowler.com/articles/practical-test-pyramid.html#DatabaseIntegration
+### Useful Resources on Microservice testing strategy
+- https://martinfowler.com/articles/microservice-testing/
+- https://martinfowler.com/articles/practical-test-pyramid.html
