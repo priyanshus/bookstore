@@ -1,4 +1,4 @@
-package com.bookstore.e2e;
+package com.bookstore.component;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
