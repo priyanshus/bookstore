@@ -100,8 +100,9 @@ In above test, `subject.fetchPrice()` reads the priceService  url from configura
 test insures that our service is able to read the configuration properly and talks to the external service.
 
 _There is a downside of using wireMock stub, as it returns a prefixed response and does not know anything if actual price
-service changes the response schema. To ensure if contract change frome external service does not break our system
-in production, we can have contract tests._ 
+service changes the response schema. To ensure contract change by external service does not break our system
+in production, we can have contract tests._ One can refer to https://martinfowler.com/bliki/ContractTest.html to read more about
+contract testing.
 
 ### Value added by Integration Tests
 - Tests the communication between different sub-modules
