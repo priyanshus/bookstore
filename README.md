@@ -81,7 +81,7 @@ Additional coverage can be tested in other layers of pyramid.
 
 ### Sample Test
 ```java
-@Test
+    @Test
     public void shouldCallWeatherService() throws Exception {
         wireMockServer.stubFor(get(urlEqualTo("/price"))
                 .willReturn(aResponse()
@@ -97,9 +97,79 @@ In above test, `subject.fetchPrice()` reads the priceService  url from configura
 test insures that our service is able to read the configuration properly and talks to the external service.
 
 _There is a downside of using wireMock stub, as it returns a prefixed response and does not know anything if actual price
-service changes the response schema. To ensure if there is any schema change/contract break from external service, we can have
-contract tests._ 
+service changes the response schema. To ensure if contract change frome external service does not break our system
+in production, we can have contract tests._ 
 
 ### Value added by Integration Tests
 - Tests the communication between different sub-modules
 - Faster feedback
+
+### Useful resources on Integration Test
+- https://martinfowler.com/bliki/IntegrationTest.html
+
+## Component Test
+Testing the whole component without other third-party code and services.
+
+Goal of component testing is to test that different parts of the microservice work together as expected at the same time isolating third-party code and services. 
+The isolation of dependencies can be achieved by test beds (Example mocks, in-memory databased).
+
+### What to Test:
+- end to end journey of micro-service
+- unhappy paths
+- testbeds are producing a slow response, offline, malformed response or broke the contract.
+
+### Important Points
+- The component testing can achieved by running the microservice in memory along with in memory test doubles. 
+This will make the tests faster but will not touch the network. This also needs a separate application config to run the microservice in memory.
+
+### Sample Test
+```java
+    @Test
+    public void shouldReturnBookResponseWithPrice() throws Exception {
+        wireMockServer.stubFor(get(urlEqualTo("/price"))
+                .willReturn(aResponse()
+                        .withBody(read("classpath:price_response.json"))
+                        .withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .withStatus(200)));
+
+        when()
+                .get(String.format("http://localhost:%s/book/price/123", port))
+                .then()
+                .log().all()
+                .statusCode(is(200))
+                .body(containsString("{\"id\":1,\"isbn\":\"123\",\"title\":\"Clean Code\",\"price\":10.0}"));
+    }
+```
+
+Test with Kafka Integration
+
+```java
+    static void startKafka() {
+            KafkaContainer kafka = new KafkaContainer(KAFKA_TEST_IMAGE);
+            kafka.setPortBindings(Arrays.asList("9092:9092", "9093:9093", "2181:2181"));
+            kafka.start();
+        }
+    
+    @Test
+    void shouldReturnBooksListenedOnKafkaTopic() throws ExecutionException, InterruptedException, IOException {
+        produceEvent("books", "156:Java Book");
+        produceEvent("books", "157:Clean Code");
+        await()
+                .atMost(60, TimeUnit.SECONDS)
+                .untilAsserted(
+                        () -> {
+                            Assertions.assertEquals(bookRepository.count(), 3);
+                        });
+
+        when()
+                .get(String.format("http://localhost:%s/book/price/156", port))
+                .then()
+                .log().all()
+                .statusCode(is(200))
+                .body(containsString("{\"id\":2,\"isbn\":\"156\",\"title\":\"Java Book\",\"price\":10.0}"));
+    }
+```
+
+### Useful Resources Microservice testing strategy
+- https://martinfowler.com/articles/microservice-testing/#testing-integration-introduction
+- https://martinfowler.com/articles/practical-test-pyramid.html#DatabaseIntegration
