@@ -1,5 +1,6 @@
 package com.bookstore.common;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpRequest;
@@ -11,8 +12,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+@Slf4j
 public class RestTemplateInterceptor implements ClientHttpRequestInterceptor {
-    final static Logger log = LoggerFactory.getLogger(RestTemplateInterceptor.class);
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException, IOException {
@@ -47,5 +48,4 @@ public class RestTemplateInterceptor implements ClientHttpRequestInterceptor {
         log.info("Response body: {}", inputStringBuilder.toString());
         log.info("=======================response end=================================================");
     }
-
 }

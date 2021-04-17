@@ -1,5 +1,7 @@
 package com.bookstore.component;
 
+import com.bookstore.component.util.TestKafkaConsumer;
+import com.bookstore.component.util.TestUtil;
 import com.bookstore.repositories.BookRepository;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.*;
@@ -11,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -35,8 +39,6 @@ public class BookStoreKafkaTest extends TestUtil {
 
     @BeforeAll
     static void before() {
-        startKafka();
-
         wireMockServer = new WireMockServer(wireMockConfig().port(8089));
         wireMockServer.start();
     }
@@ -55,22 +57,14 @@ public class BookStoreKafkaTest extends TestUtil {
                         .withStatus(200)));
     }
 
-    @Test
-    void shouldReturnBook() {
-        when()
-                .get(String.format("http://localhost:%s/book/price/123", port))
-                .then()
-                .log().all()
-                .statusCode(is(200))
-                .body(containsString("{\"id\":1,\"isbn\":\"123\",\"title\":\"Clean Code\",\"price\":10.0}"));
-    }
+
 
     @Test
-    void shouldReturnBooksListenedOnKafkaTopic() throws ExecutionException, InterruptedException, IOException {
-        produceEvent("books", "156:Java Book");
-        produceEvent("books", "157:Clean Code");
+    void shouldAddBookWhenEventReceivedForNewEntry() throws ExecutionException, InterruptedException {
+        produceEvent("new.entry", "156:Java Book");
+        produceEvent("new.entry", "157:Clean Code");
         await()
-                .atMost(60, TimeUnit.SECONDS)
+                .atMost(20, TimeUnit.SECONDS)
                 .untilAsserted(
                         () -> {
                             Assertions.assertEquals(bookRepository.count(), 3);
@@ -81,16 +75,23 @@ public class BookStoreKafkaTest extends TestUtil {
                 .then()
                 .log().all()
                 .statusCode(is(200))
-                .body(containsString("{\"id\":2,\"isbn\":\"156\",\"title\":\"Java Book\",\"price\":10.0}"));
+                .body(containsString("\"isbn\":\"156\",\"title\":\"Java Book\",\"price\":10.0}"));
     }
 
     @Test
-    void shouldFailWhenPriceAPIReturnsError() {
-        when()
-                .get(String.format("http://localhost:%s/book/price/160", port))
-                .then()
-                .log().all()
-                .statusCode(is(200))
-                .body(containsString("{\"error\":\"error\",\"message\":\"not found\"}"));
+    void shouldDeleteBookWhenEventReceivedToDeleteBook() throws ExecutionException, InterruptedException {
+        produceEvent("remove.entry", "123");
+
+        List<String> eventsReceived = consumeEvents("consumer-one");
+        Assertions.assertEquals(1, eventsReceived.size(), "Events Received Count");
+        Assertions.assertEquals("123", eventsReceived.get(0), "Event Content");
+    }
+
+    List<String> consumeEvents(String topic) throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        TestKafkaConsumer kafkaConsumer = new TestKafkaConsumer(consumer,topic, 1, latch);
+        kafkaConsumer.start();
+        latch.await(20, TimeUnit.SECONDS);
+        return kafkaConsumer.getMessagesReceived();
     }
 }

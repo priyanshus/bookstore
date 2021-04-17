@@ -1,0 +1,18 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    bookstore:
+      consumer:
+        group-id: bookstore
+        auto-offset-reset: earliest
+        topic:
+          newentry: new.entry
+          removeentry: remove.entry
+      producer:
+        topic:
+          consumer-one: consumer-one
+
+price:
+  service:
+    url: http://localhost:8089
+

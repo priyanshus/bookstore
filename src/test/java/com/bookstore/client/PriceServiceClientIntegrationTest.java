@@ -1,5 +1,6 @@
 package com.bookstore.client;
 
+import com.bookstore.model.PriceResponse;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Rule;
@@ -14,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ResourceUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -49,12 +51,12 @@ public class PriceServiceClientIntegrationTest {
                         .withBody(read("classpath:price_response.json"))
                         .withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .withStatus(200)));
-        var weatherResponse = subject.fetchPrice();
+        PriceResponse weatherResponse = subject.fetchPrice();
         assertThat(weatherResponse.getPrice(), is(10.00));
     }
 
     public String read(String filePath) throws IOException {
-        var file = ResourceUtils.getFile(filePath);
+        File file = ResourceUtils.getFile(filePath);
         return new String(Files.readAllBytes(file.toPath()));
     }
 }

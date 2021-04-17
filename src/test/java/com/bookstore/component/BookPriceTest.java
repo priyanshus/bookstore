@@ -15,6 +15,7 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ResourceUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -45,7 +46,7 @@ public class BookPriceTest {
     }
 
     @Test
-    public void shouldReturnBookResponseWithPrice() throws Exception {
+    public void shouldReturnBookResponseWithPriceWhenCalledPriceEndpoint() throws Exception {
         wireMockServer.stubFor(get(urlEqualTo("/price"))
                 .willReturn(aResponse()
                         .withBody(read("classpath:price_response.json"))
@@ -96,7 +97,7 @@ public class BookPriceTest {
 
 
     public static String read(String filePath) throws IOException {
-        var file = ResourceUtils.getFile(filePath);
+        File file = ResourceUtils.getFile(filePath);
         return new String(Files.readAllBytes(file.toPath()));
     }
 }

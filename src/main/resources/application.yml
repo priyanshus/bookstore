@@ -1,0 +1,25 @@
+
+server:
+  port: 8080
+
+spring:
+  h2:
+    console:
+      enabled: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    bookstore:
+      consumer:
+        group-id: bookstore
+        auto-offset-reset: latest
+        topic:
+          newentry: newbooks
+          removeentry: removeentry
+      producer:
+        topic:
+          consumer-one: consumer-one
+
+
+price:
+  service:
+    url: https://bookapi.free.beeceptor.com

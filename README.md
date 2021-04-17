@@ -7,16 +7,20 @@ Bookstore is a Rest Application which exposes few endpoints as below:
 - /book/{isbn} : Get a book by given isbn path parameter.
 - /book/price/{isbn} : Get a book price by given isbn path parameter.
 
-The bookstore also listens on a Kafka topic (books) and stores the consumed event in bookRepository (in memory h2 database). It expects the event as `{isbn}:{bookTitle} -> 123:Clean Code`. The same book can be fetched by bookstore APIs.
+**Kafka Use Case**
+- Consumer Side - The bookstore listens on a Kafka topic  (`newbooks`) and adds the consumed event in bookRepository.
+- Producer Side - The bookstore listens on a Kafka topic (`removeentry`) and deletes the book from bookRepository. It also produces an event for consumers of bookstore to update them about deletion a book from database.
+The producer produces event on `consumer-one` topic.
 
-In addition to above, bookstore talks to an external service to fetch the book price. The fetched price for an isbn used to form `book/price/{isbn}` response. In case of price service failures, the book stores returns failure messages.
+**Integration With Other Service**
+In order to replicate the microservice usecase, the bookstore talks to price service to fetch the price of a book. Its REST API based communication.
 
 ### How to run tests
 `gradle test` runs all the tests. Make sure the host system is having docker installed to run the component tests.
 
 # Test Pyramid
 
-The principle behind test automation is to get **_fast and accurate_** feedback for any product changes. One way to do that is **_write lots of small and fast unit tests_**. 
+The principle behind test automation is to get **_fast and accurate_** feedback for any changes in the code. Test pyramid talks about **_writing lots of small and fast unit tests_**. 
 Write some more coarse-grained tests and **_very few high-level_** tests that test your application from end to end.
 
 ![Test Pyramid](docs/images/test-pyramid.png)
@@ -112,7 +116,7 @@ contract testing.
 - https://martinfowler.com/bliki/IntegrationTest.html
 
 ## Component Test
-Testing the whole component without other third-party code and services.
+Testing the whole component isolating the third-party code and services.
 
 Goal of component testing is to test that different parts of the microservice work together as expected at the same time isolating third-party code and services. 
 The isolation of dependencies can be achieved by test beds (mocks, in-memory database etc).
@@ -148,12 +152,6 @@ This will make the tests faster but will not touch the network. This also needs 
 Test with Kafka Integration
 
 ```java
-    static void startKafka() {
-            KafkaContainer kafka = new KafkaContainer(KAFKA_TEST_IMAGE);
-            kafka.setPortBindings(Arrays.asList("9092:9092", "9093:9093", "2181:2181"));
-            kafka.start();
-        }
-    
     @Test
     void shouldReturnBooksListenedOnKafkaTopic() throws ExecutionException, InterruptedException, IOException {
         produceEvent("books", "156:Java Book");
@@ -170,7 +168,7 @@ Test with Kafka Integration
                 .then()
                 .log().all()
                 .statusCode(is(200))
-                .body(containsString("{\"id\":2,\"isbn\":\"156\",\"title\":\"Java Book\",\"price\":10.0}"));
+                .body(containsString("\"isbn\":\"156\",\"title\":\"Java Book\",\"price\":10.0}"));
     }
 ```
 
