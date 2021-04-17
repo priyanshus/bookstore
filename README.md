@@ -154,7 +154,7 @@ This will make the tests faster but will not touch the network. This also needs 
 
 ```java
     @Test
-    void shouldReturnBooksListenedOnKafkaTopic() throws ExecutionException, InterruptedException, IOException {
+    void shouldAddBookWhenEventReceivedForNewEntry() throws ExecutionException, InterruptedException, IOException {
         produceEvent("books", "156:Java Book");
         produceEvent("books", "157:Clean Code");
         await()
@@ -170,6 +170,15 @@ This will make the tests faster but will not touch the network. This also needs 
                 .log().all()
                 .statusCode(is(200))
                 .body(containsString("\"isbn\":\"156\",\"title\":\"Java Book\",\"price\":10.0}"));
+    }
+    
+    @Test
+    void shouldDeleteBookWhenEventReceivedToDeleteBook() throws ExecutionException, InterruptedException {
+        produceEvent("remove.entry", "123");
+
+        List<String> eventsReceived = consumeEvents("consumer-one");
+        Assertions.assertEquals(1, eventsReceived.size(), "Events Received Count");
+        Assertions.assertEquals("123", eventsReceived.get(0), "Event Content");
     }
 ```
 Read more about Component Testing [here](https://dzone.com/articles/component-testing-for-event-driven-microservice "here").
