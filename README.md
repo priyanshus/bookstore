@@ -8,11 +8,12 @@ Bookstore is a Rest Application which exposes few endpoints as below:
 - /book/price/{isbn} : Get a book price by given isbn path parameter.
 
 **Kafka Use Case**
-- Consumer Side - The bookstore listens on a Kafka topic  (`newbooks`) and adds the consumed event in bookRepository.
-- Producer Side - The bookstore listens on a Kafka topic (`removeentry`) and deletes the book from bookRepository. It also produces an event for consumers of bookstore to update them about deletion a book from database.
+* Consumer Side - The bookstore listens on a Kafka topic  (`newbooks`) and adds the consumed event in bookRepository.
+* Producer Side - The bookstore listens on a Kafka topic (`removeentry`) and deletes the book from bookRepository. It also produces an event for consumers of bookstore to update them about deletion a book from database.
 The producer produces event on `consumer-one` topic.
 
 **Integration With Other Service**
+
 In order to replicate the microservice usecase, the bookstore talks to price service to fetch the price of a book. Its REST API based communication.
 
 ### How to run tests
@@ -149,7 +150,7 @@ This will make the tests faster but will not touch the network. This also needs 
     }
 ```
 
-Test with Kafka Integration
+**[Test with Kafka Integration](https://github.com/priyanshus/bookstore/blob/master/src/test/java/com/bookstore/component/BookStoreKafkaTest.java)**
 
 ```java
     @Test
@@ -171,6 +172,7 @@ Test with Kafka Integration
                 .body(containsString("\"isbn\":\"156\",\"title\":\"Java Book\",\"price\":10.0}"));
     }
 ```
+Read more about Component Testing [here](https://dzone.com/articles/component-testing-for-event-driven-microservice "here").
 
 ### Useful Resources on Microservice testing strategy
 - https://martinfowler.com/articles/microservice-testing/
