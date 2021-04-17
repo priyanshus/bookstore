@@ -3,7 +3,7 @@
 ![Kakfa](docs/images/junit.png)
 ![Kakfa](docs/images/testpyramid.png)
 # bookstore
-Spring boot based bookstore application. The primary objective to develope bookstore is to learn practical test implementation in a spring app based on the test pyramid concepts.
+Spring boot based bookstore application. The primary objective to develope bookstore is to learn practical test implementation in a spring app based on the test pyramid concepts..
 
 ## About the App
 Bookstore is a Rest Application which exposes few endpoints as below:
