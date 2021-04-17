@@ -32,5 +32,29 @@ dependencies {
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags "component-test", "integration-test"
+    }
+    testLogging {
+        showStandardStreams = true
+    }
 }
+
+task integrationTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'integration-test'
+    }
+    testLogging {
+        showStandardStreams = true
+    }
+}
+
+task componentTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'component-test'
+    }
+    testLogging {
+        showStandardStreams = true
+    }
+}
+

@@ -21,7 +21,11 @@ The producer produces event on `consumer-one` topic.
 In order to replicate the microservice usecase, the bookstore talks to price service to fetch the price of a book. Its REST API based communication.
 
 ### How to run tests
-`gradle test` runs all the tests. Make sure the host system is having docker installed to run the component tests.
+`gradle test` runs all the unit tests. 
+
+`gradle integrationTest` runs integration tests.
+
+`gradle componentTest` runs integration tests.
 
 # Test Pyramid
 
