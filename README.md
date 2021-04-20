@@ -1,11 +1,13 @@
 ![Kakfa](docs/images/kafka.png)
-![Kakfa](docs/images/springboot.png)
-![Kakfa](docs/images/junit.png)
-![Kakfa](docs/images/testpyramid.png)
+![SpringBoot](docs/images/springboot.png)
+![Junit](docs/images/junit.png)
+![TestPyramid](docs/images/testpyramid.png)
 # bookstore ![Build](https://github.com/priyanshus/bookstore/actions/workflows/test.yml/badge.svg)
 Spring boot based bookstore application. The primary objective to develope bookstore is to learn practical test implementation in a spring app based on the test pyramid concepts.
 
 ## About the App
+![BookStore](docs/images/BookStore.png)
+
 Bookstore is a Rest Application which exposes few endpoints as below:
 - /books : Get all the books from repository.
 - /book/{isbn} : Get a book by given isbn path parameter.
