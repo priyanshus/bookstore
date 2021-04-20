@@ -133,15 +133,14 @@ Goal of component testing is to test that different parts of the microservice wo
 The isolation of dependencies can be achieved by test beds (mocks, in-memory database etc).
 
 ### What to Test:
-- end to end journey of micro-service
-- unhappy paths
-- testbeds are producing a slow response, offline, malformed response or broke the contract.
+- end to end journey of microservice within the boundry of service in context.
+- unhappy responses from external systems.
 
 ### Important Points
 - The component testing can achieved by running the microservice in memory along with in memory test doubles. 
 This will make the tests faster but will not touch the network. This also needs a separate application config to run the microservice in memory.
 
-### Sample Test
+### [Sample Test](https://github.com/priyanshus/bookstore/blob/master/src/test/java/com/bookstore/component/BookPriceTest.java)
 ```java
     @Test
     public void shouldReturnBookResponseWithPrice() throws Exception {
